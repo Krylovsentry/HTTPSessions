@@ -17,16 +17,7 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
-        File file = new File("D:\\IdeaProjects\\HTTPSessions\\web\\users.txt");
-
-
-        String login = req.getParameter("login");
-        String password = req.getParameter("password");
-        FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(),true);
-        fileWriter.write(login + " " + password + "\n");
-
-        fileWriter.close();
+        writeToFile("D:\\IdeaProjects\\HTTPSessions\\web\\users.txt",req);
 
 
         PrintWriter out = resp.getWriter();
@@ -40,6 +31,19 @@ public class RegisterServlet extends HttpServlet {
                 "<body bgcolor=\"#f0f0f0\">\n" +
                 "<h1 align=\"center\"> Congratulations! You've created a new account!</h1> </body></html>");
 
+
+    }
+
+
+    public void writeToFile(String filepath, HttpServletRequest request) throws IOException {
+
+        File file = new File(filepath);
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
+
+        FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(),true);
+        fileWriter.write(login + " " + password + "\n");
+        fileWriter.close();
 
     }
 }

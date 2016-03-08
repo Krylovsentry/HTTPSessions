@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -15,27 +16,47 @@ public class LoginServlet extends HttpServlet {
 
     private boolean isTrue;
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Scanner in = new Scanner(new File("D:\\IdeaProjects\\HTTPSessions\\web\\users.txt"));
-
-        String login = req.getParameter("login");
-        String password = req.getParameter("password");
 
         isTrue = false;
 
+        checkCoockie(req,resp);
 
-        Cookie [] cookies = req.getCookies();
+        validation(req,resp);
+
+        if (!isTrue) {
+            resp.sendRedirect("/register.html");
+        }
+
+    }
+
+
+    public void checkCoockie(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
+
+        Cookie [] cookies = request.getCookies();
 
         if (login.equalsIgnoreCase("")&&password.equalsIgnoreCase("")) {
             if (cookies != null) {
 
-
                 isTrue = true;
-                resp.sendRedirect("/WelcomeServlet?login=" + cookies[0].getName());
+                response.sendRedirect("/WelcomeServlet?login=" + cookies[0].getName());
             }
         }
 
+    }
+
+
+
+
+    public void validation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        Scanner in = new Scanner(new File("D:\\IdeaProjects\\HTTPSessions\\web\\users.txt"));
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
 
         while (in.hasNextLine()){
 
@@ -47,29 +68,28 @@ public class LoginServlet extends HttpServlet {
                 if (array[1].equalsIgnoreCase(password)) {
 
 
-                    if (req.getParameter("ano").equalsIgnoreCase("on")){
+                    if (request.getParameter("ano").equalsIgnoreCase("on")){
 
                         Cookie cookie = new Cookie(login,password);
-                        resp.addCookie(cookie);
+                        response.addCookie(cookie);
 
 
                     }
 
                     isTrue = true;
-                    resp.sendRedirect("/WelcomeServlet?login=" + login);
+                    response.sendRedirect("/WelcomeServlet?login=" + login);
 
                 }
             }
 
         }
 
-        if (!isTrue) {
-            resp.sendRedirect("/register.html");
-        }
-
-
-
         in.close();
 
     }
+
+
+
+
+
 }
